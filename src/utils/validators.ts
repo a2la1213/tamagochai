@@ -230,7 +230,7 @@ export function validateGenome(genome: any): ValidationResult {
 export function containsInappropriateContent(text: string): boolean {
   // Liste très basique pour le MVP
   // En production, utiliser une vraie solution de modération
-  const inappropriatePatterns = [
+  const inappropriatePatterns: string[] = [
     // Ajouter des patterns si nécessaire
   ];
   
