@@ -1,37 +1,31 @@
 // app/index.tsx
-// Point d'entrée - redirige selon l'état du TamagochAI
+// Écran d'entrée - redirige selon l'état
 
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Redirect } from 'expo-router';
 import { useTamagochaiStore } from '../src/stores';
 
-export default function Index() {
-  const tamagochai = useTamagochaiStore(state => state.tamagochai);
-  const isLoading = useTamagochaiStore(state => state.isLoading);
+export default function IndexScreen() {
   const isInitialized = useTamagochaiStore(state => state.isInitialized);
+  const isFirstLaunch = useTamagochaiStore(state => state.isFirstLaunch);
+  const tamagochai = useTamagochaiStore(state => state.tamagochai);
 
-  // Attendre l'initialisation
-  if (!isInitialized || isLoading) {
+  // En cours de chargement
+  if (!isInitialized) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#3B82F6" />
-        <Text style={styles.loadingText}>Chargement...</Text>
       </View>
     );
   }
 
-  // Si pas de TamagochAI, aller à l'onboarding
-  if (!tamagochai) {
+  // Premier lancement ou pas de TamagochAI -> Onboarding
+  if (isFirstLaunch || !tamagochai) {
     return <Redirect href="/onboarding" />;
   }
 
-  // Si premier lancement, aller à l'onboarding (étape finale)
-  if (tamagochai.isFirstLaunch) {
-    return <Redirect href="/onboarding" />;
-  }
-
-  // Sinon, aller au chat principal
+  // TamagochAI existe -> Chat
   return <Redirect href="/(tabs)" />;
 }
 
@@ -41,10 +35,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: '#6B7280',
   },
 });

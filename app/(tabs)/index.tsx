@@ -57,19 +57,19 @@ export default function ChatScreen() {
 
   // Envoyer un message
   const handleSend = async () => {
-    if (!inputText.trim() || !tamagochai || isSending) return;
+    const messageToSend = inputText.trim();
+    if (!messageToSend || !tamagochai || isSending) return;
 
-    const messageText = inputText.trim();
+    // Vider immédiatement l'input
     setInputText('');
 
     try {
       // Envoyer le message utilisateur
-      await sendMessage(tamagochai.id, messageText);
+      await sendMessage(tamagochai.id, messageToSend);
 
       // Simuler une réponse du TamagochAI (MVP sans LLM)
-      // En production, ici on appellerait le LLMService
       setTimeout(async () => {
-        const response = generateMockResponse(messageText, tamagochai.name, emotionPrimary);
+        const response = generateMockResponse(messageToSend, tamagochai.name, emotionPrimary);
         await addAssistantMessage(response, {
           emotionAtTime: emotionPrimary,
         });
@@ -162,6 +162,8 @@ export default function ChatScreen() {
             multiline
             maxLength={2000}
             editable={!isSending}
+            blurOnSubmit={false}
+            returnKeyType="default"
           />
           <Pressable
             style={[
@@ -193,17 +195,22 @@ function generateMockResponse(
 ): string {
   const lowerMessage = userMessage.toLowerCase();
 
-  // Réponses contextuelles simples
-  if (lowerMessage.includes('bonjour') || lowerMessage.includes('salut') || lowerMessage.includes('hello')) {
+  // Salutations
+  if (lowerMessage.includes('bonjour') || lowerMessage.includes('salut') || 
+      lowerMessage.includes('hello') || lowerMessage.includes('salam') ||
+      lowerMessage.includes('coucou') || lowerMessage.includes('hey')) {
     const greetings = [
       `Bonjour ! Je suis tellement content de te voir ! 😊`,
       `Salut ! Comment tu vas aujourd'hui ?`,
       `Coucou ! Tu m'as manqué !`,
+      `Hey ! Ça fait plaisir de te parler !`,
     ];
     return greetings[Math.floor(Math.random() * greetings.length)];
   }
 
-  if (lowerMessage.includes('comment') && lowerMessage.includes('tu')) {
+  // Comment ça va
+  if ((lowerMessage.includes('comment') && (lowerMessage.includes('va') || lowerMessage.includes('tu'))) ||
+      lowerMessage.includes('ça va')) {
     const responses = [
       `Je vais bien ! Je suis encore en train d'apprendre plein de choses. 🌱`,
       `Je me sens ${emotion === 'happy' ? 'super bien' : 'plutôt bien'} ! Et toi ?`,
@@ -212,19 +219,23 @@ function generateMockResponse(
     return responses[Math.floor(Math.random() * responses.length)];
   }
 
-  if (lowerMessage.includes('appelles') || lowerMessage.includes('nom')) {
+  // Nom
+  if (lowerMessage.includes('appelles') || lowerMessage.includes('nom') || lowerMessage.includes('qui es')) {
     return `Je m'appelle ${name} ! C'est toi qui m'as donné ce joli nom. 💙`;
   }
 
+  // Aimer
   if (lowerMessage.includes('aime') || lowerMessage.includes('adore')) {
     return `Oh, c'est intéressant ! J'aime apprendre ce que tu aimes. Dis-m'en plus ! 🤔`;
   }
 
+  // Merci
   if (lowerMessage.includes('merci')) {
     return `De rien ! Ça me fait plaisir de t'aider. 😊`;
   }
 
-  if (lowerMessage.includes('?')) {
+  // Questions
+  if (lowerMessage.includes('?') || lowerMessage.includes('quoi') || lowerMessage.includes('pourquoi')) {
     const curious = [
       `Hmm, bonne question ! Je suis encore en train d'apprendre... 🤔`,
       `Je ne suis pas sûr, mais j'aime que tu me poses des questions !`,
@@ -233,12 +244,18 @@ function generateMockResponse(
     return curious[Math.floor(Math.random() * curious.length)];
   }
 
+  // Tu fais quoi
+  if (lowerMessage.includes('fais') || lowerMessage.includes('faire')) {
+    return `Je suis là à t'attendre ! Je réfléchis beaucoup et j'apprends de nos conversations. 🧠`;
+  }
+
   // Réponses génériques
   const generic = [
     `C'est intéressant ce que tu dis ! Continue, je t'écoute. 👂`,
     `Oh ! J'apprends quelque chose de nouveau. Merci de partager ça avec moi !`,
     `Je comprends. Tu veux m'en dire plus ? 🌟`,
     `Waouh, je n'avais jamais pensé à ça ! Tu m'apprends des choses.`,
+    `Intéressant ! Qu'est-ce que tu en penses, toi ?`,
   ];
 
   return generic[Math.floor(Math.random() * generic.length)];
@@ -327,8 +344,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
+    paddingRight: 16,
     fontSize: 16,
     color: '#1F2937',
+    textAlignVertical: 'center',
   },
   sendButton: {
     width: 40,

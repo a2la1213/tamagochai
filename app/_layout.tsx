@@ -1,5 +1,5 @@
 // app/_layout.tsx
-// Layout principal de l'application
+// Root layout avec navigation
 
 import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
@@ -13,27 +13,23 @@ export default function RootLayout() {
   const initialize = useTamagochaiStore(state => state.initialize);
 
   useEffect(() => {
-    async function init() {
+    const init = async () => {
       try {
-        // Initialiser la base de données
         await databaseService.initialize();
-        
-        // Initialiser le store TamagochAI
         await initialize();
-        
         setIsReady(true);
       } catch (error) {
-        console.error('[RootLayout] Initialization error:', error);
-        setIsReady(true); // Continue anyway to show error state
+        console.error('[RootLayout] Init error:', error);
+        setIsReady(true);
       }
-    }
+    };
 
     init();
-  }, [initialize]);
+  }, []);
 
   if (!isReady) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={styles.loading}>
         <ActivityIndicator size="large" color="#3B82F6" />
       </View>
     );
@@ -42,14 +38,9 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation: 'slide_from_right',
-        }}
-      >
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="onboarding/index" />
         <Stack.Screen name="(tabs)" />
       </Stack>
     </>
@@ -57,7 +48,7 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  loading: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
