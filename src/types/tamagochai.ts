@@ -1,22 +1,11 @@
 // src/types/tamagochai.ts
-// Types principaux du TamagochAI
+// Types pour le TamagochAI principal
 
+import { Genome } from './genome';
+import { AvatarConfig } from './avatar';
 import { HormoneLevels } from './hormone';
 import { EmotionState } from './emotion';
 import { EvolutionStage } from './evolution';
-import { AvatarConfig } from './avatar';
-
-/**
- * Génome : traits innés générés à la naissance (immuables)
- * Chaque trait est une valeur entre 0 et 100
- */
-export interface Genome {
-  social: number;      // 0=introverti, 100=extraverti
-  cognitive: number;   // 0=intuitif, 100=analytique
-  emotional: number;   // 0=stoïque, 100=expressif
-  energy: number;      // 0=calme, 100=énergique
-  creativity: number;  // 0=pragmatique, 100=imaginatif
-}
 
 /**
  * Statistiques du TamagochAI
@@ -27,8 +16,8 @@ export interface TamagochaiStats {
   totalXP: number;
   currentStage: EvolutionStage;
   daysAlive: number;
-  longestStreak: number;      // Jours consécutifs d'interaction
   currentStreak: number;
+  longestStreak: number;
   memoriesCount: number;
   flashMemoriesCount: number;
 }
@@ -56,31 +45,18 @@ export interface TamagochaiState {
  */
 export interface CreateTamagochaiConfig {
   name: string;
-  avatar: AvatarConfig;
-  genome?: Partial<Genome>; // Si non fourni, généré aléatoirement
+  genome?: Partial<Genome>;
+  avatar?: Partial<AvatarConfig>;
 }
 
 /**
- * Résumé léger pour affichage rapide
+ * Résumé du TamagochAI pour affichage
  */
 export interface TamagochaiSummary {
   id: string;
   name: string;
   stage: EvolutionStage;
-  dominantEmotion: string;
-  lastInteractionAt: Date;
+  emotion: string;
+  avatarType: string;
+  daysAlive: number;
 }
-
-/**
- * Mode de développement (affecte la vitesse d'évolution)
- */
-export type DevelopmentMode = 'production' | 'prototype' | 'debug';
-
-/**
- * Multiplicateurs XP par mode
- */
-export const XP_MULTIPLIERS: Record<DevelopmentMode, number> = {
-  production: 1,
-  prototype: 10,
-  debug: 50,
-};

@@ -1,19 +1,19 @@
 // src/types/hormone.ts
-// Système hormonal du TamagochAI
+// Types pour le système hormonal
 
 /**
- * Les 6 hormones du système
+ * Types d'hormones
  */
-export type HormoneType = 
-  | 'dopamine'      // Plaisir, motivation, récompense
-  | 'serotonin'     // Bien-être, stabilité, humeur
-  | 'oxytocin'      // Attachement, confiance, lien social
-  | 'cortisol'      // Stress, alerte, anxiété
-  | 'adrenaline'    // Excitation, peur, énergie immédiate
-  | 'endorphins';   // Bonheur, soulagement, euphorie
+export type HormoneType =
+  | 'dopamine'
+  | 'serotonin'
+  | 'oxytocin'
+  | 'cortisol'
+  | 'adrenaline'
+  | 'endorphins';
 
 /**
- * Niveaux actuels de toutes les hormones (0-100)
+ * Niveaux de toutes les hormones (0-100)
  */
 export interface HormoneLevels {
   dopamine: number;
@@ -25,43 +25,7 @@ export interface HormoneLevels {
 }
 
 /**
- * Configuration d'une hormone
- */
-export interface HormoneConfig {
-  name: HormoneType;
-  displayName: string;
-  description: string;
-  baseline: number;       // Niveau de base (repos)
-  min: number;            // Minimum possible
-  max: number;            // Maximum possible
-  halfLife: number;       // Demi-vie en minutes
-  decayRate: number;      // Taux de décroissance par tick
-}
-
-/**
- * Modificateur hormonal (appliqué lors d'événements)
- */
-export interface HormoneModifier {
-  hormone: HormoneType;
-  delta: number;          // Changement (+/-)
-  duration?: number;      // Durée en minutes (optionnel)
-  source: string;         // Source du modificateur (ex: "user_message", "battery_low")
-}
-
-/**
- * Événement hormonal enregistré
- */
-export interface HormoneEvent {
-  id: string;
-  timestamp: Date;
-  modifiers: HormoneModifier[];
-  trigger: string;        // Ce qui a déclenché l'événement
-  levelsBefore: HormoneLevels;
-  levelsAfter: HormoneLevels;
-}
-
-/**
- * État hormonal pour persistence
+ * État hormonal complet
  */
 export interface HormoneState {
   levels: HormoneLevels;
@@ -70,33 +34,61 @@ export interface HormoneState {
 }
 
 /**
- * Seuils pour déterminer l'état d'une hormone
+ * Configuration d'une hormone
  */
-export interface HormoneThresholds {
-  critical_low: number;   // < 15
-  low: number;            // < 30
-  normal_low: number;     // < 45
-  normal_high: number;    // < 65
-  high: number;           // < 80
-  critical_high: number;  // >= 80
+export interface HormoneConfig {
+  name: string;
+  displayName: string;
+  description: string;
+  baseline: number;
+  decayRate: number;
+  halfLife: number;
+  min: number;
+  max: number;
+  effects: {
+    low: string;
+    high: string;
+  };
 }
 
 /**
- * Niveau descriptif d'une hormone
+ * Modificateur d'hormone
  */
-export type HormoneLevel = 
-  | 'critical_low' 
-  | 'low' 
-  | 'normal' 
-  | 'high' 
-  | 'critical_high';
+export interface HormoneModifier {
+  hormone: HormoneType;
+  delta: number;
+  source: string;
+  duration?: number;
+}
 
 /**
- * Résumé de l'état hormonal pour affichage
+ * Historique d'hormone
+ */
+export interface HormoneHistory {
+  timestamp: Date;
+  levels: HormoneLevels;
+  trigger?: string;
+}
+
+/**
+ * Seuils hormonaux
+ */
+export interface HormoneThresholds {
+  critical_low: number;
+  low: number;
+  normal_low: number;
+  normal_high: number;
+  high: number;
+  critical_high: number;
+}
+
+/**
+ * Résumé de l'état hormonal
  */
 export interface HormoneSummary {
   dominant: HormoneType;
   dominantLevel: number;
-  balance: 'stressed' | 'anxious' | 'calm' | 'happy' | 'excited' | 'neutral';
-  alerts: HormoneType[];  // Hormones en niveau critique
+  balanceState: 'balanced' | 'stressed' | 'happy' | 'low_energy';
+  alerts: HormoneType[];
+  levels: HormoneLevels;
 }

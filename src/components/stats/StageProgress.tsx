@@ -14,11 +14,11 @@ interface StageProgressProps {
 }
 
 const STAGE_COLORS: Record<EvolutionStage, string> = {
-  emergence: '#10B981',     // Vert
-  learning: '#3B82F6',      // Bleu
-  individuation: '#8B5CF6', // Violet
-  wisdom: '#F59E0B',        // Ambre
-  transcendence: '#EC4899', // Rose
+  emergence: '#10B981',
+  learning: '#3B82F6',
+  individuation: '#8B5CF6',
+  wisdom: '#F59E0B',
+  transcendence: '#EC4899',
 };
 
 const STAGE_EMOJIS: Record<EvolutionStage, string> = {
@@ -29,9 +29,6 @@ const STAGE_EMOJIS: Record<EvolutionStage, string> = {
   transcendence: '✨',
 };
 
-/**
- * Composant progression d'évolution
- */
 export function StageProgress({
   progress,
   showDetails = true,
@@ -43,11 +40,9 @@ export function StageProgress({
   const emoji = STAGE_EMOJIS[currentStage];
   const stageName = formatStageName(currentStage);
 
-  // XP formaté
   const formattedCurrentXP = formatXP(xpInCurrentStage);
   const formattedTargetXP = xpForNextStage ? formatXP(xpForNextStage) : '∞';
 
-  // Est-ce le stade final ?
   const isFinalStage = currentStage === 'transcendence';
 
   if (compact) {
@@ -61,7 +56,7 @@ export function StageProgress({
               <View
                 style={[
                   styles.compactBarFill,
-                  { width: `${percentage}%`, backgroundColor: color },
+                  { width: `${percentage}%` as any, backgroundColor: color },
                 ]}
               />
             </View>
@@ -74,7 +69,6 @@ export function StageProgress({
 
   return (
     <View style={styles.container}>
-      {/* Header: Emoji + Nom du stade */}
       <View style={styles.header}>
         <Text style={styles.emoji}>{emoji}</Text>
         <View style={styles.headerText}>
@@ -85,20 +79,18 @@ export function StageProgress({
         </View>
       </View>
 
-      {/* Barre de progression */}
       <View style={styles.progressContainer}>
         <View style={styles.progressTrack}>
           <View
             style={[
               styles.progressFill,
-              { width: `${percentage}%`, backgroundColor: color },
+              { width: `${percentage}%` as any, backgroundColor: color },
             ]}
           />
         </View>
         <Text style={styles.percentText}>{Math.round(percentage)}%</Text>
       </View>
 
-      {/* XP Info */}
       {showDetails && (
         <View style={styles.xpContainer}>
           <Text style={styles.xpText}>
@@ -117,7 +109,6 @@ export function StageProgress({
         </View>
       )}
 
-      {/* Timeline des stades (optionnel) */}
       {showDetails && (
         <View style={styles.timeline}>
           {STAGE_ORDER.map((stage, index) => {
@@ -158,9 +149,6 @@ export function StageProgress({
   );
 }
 
-/**
- * Composant mini pour afficher juste le stade actuel
- */
 export function StageBadge({ stage }: { stage: EvolutionStage }) {
   const color = STAGE_COLORS[stage];
   const emoji = STAGE_EMOJIS[stage];
@@ -276,7 +264,6 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 1.5,
   },
-  // Compact styles
   compactContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -317,7 +304,6 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     width: 32,
   },
-  // Badge styles
   badge: {
     flexDirection: 'row',
     alignItems: 'center',

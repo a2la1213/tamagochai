@@ -10,9 +10,6 @@ import { SensorContext, BatteryState, NetworkState, TimeContext } from '../types
 import { HORMONE_MODIFIERS } from '../constants';
 import { formatBattery, formatPartOfDay, formatGreeting } from '../utils';
 
-/**
- * Hook pour accéder aux capteurs du smartphone
- */
 export function useSensors() {
   const tamagochai = useTamagochaiStore(state => state.tamagochai);
   const refreshHormones = useTamagochaiStore(state => state.refreshHormones);
@@ -32,7 +29,6 @@ export function useSensors() {
 
   const [lastBatteryReaction, setLastBatteryReaction] = useState<Date | null>(null);
 
-  // Contexte temporel (calculé, pas un capteur)
   const timeContext = useMemo((): TimeContext => {
     const now = new Date();
     const hour = now.getHours();
@@ -61,7 +57,6 @@ export function useSensors() {
     };
   }, []);
 
-  // Charger l'état de la batterie
   const loadBatteryState = useCallback(async () => {
     try {
       const level = await Battery.getBatteryLevelAsync();
@@ -86,7 +81,6 @@ export function useSensors() {
     }
   }, []);
 
-  // Charger l'état du réseau
   const loadNetworkState = useCallback(async () => {
     try {
       const state = await Network.getNetworkStateAsync();
@@ -102,11 +96,9 @@ export function useSensors() {
     }
   }, []);
 
-  // Réagir aux événements batterie
   const reactToBattery = useCallback(async () => {
     if (!tamagochai) return;
 
-    // Cooldown de 5 minutes entre réactions
     if (lastBatteryReaction) {
       const elapsed = Date.now() - lastBatteryReaction.getTime();
       if (elapsed < 5 * 60 * 1000) return;
@@ -133,17 +125,15 @@ export function useSensors() {
     }
   }, [tamagochai?.id, lastBatteryReaction, loadBatteryState, refreshHormones]);
 
-  // Charger les états au montage
   useEffect(() => {
     loadBatteryState();
     loadNetworkState();
   }, [loadBatteryState, loadNetworkState]);
 
-  // Écouter les changements de batterie
   useEffect(() => {
-    const subscription = Battery.addBatteryLevelListener(({ batteryLevel }) => {
+    const subscription = Battery.addBatteryLevelListener(({ batteryLevel }: { batteryLevel: number }) => {
       const levelPercent = Math.round(batteryLevel * 100);
-      setBatteryState(prev => ({
+      setBatteryState((prev: BatteryState) => ({
         ...prev,
         level: levelPercent,
         isLow: levelPercent < 20,
@@ -151,8 +141,8 @@ export function useSensors() {
       }));
     });
 
-    const stateSubscription = Battery.addBatteryStateListener(({ batteryState }) => {
-      setBatteryState(prev => ({
+    const stateSubscription = Battery.addBatteryStateListener(({ batteryState }: { batteryState: Battery.BatteryState }) => {
+      setBatteryState((prev: BatteryState) => ({
         ...prev,
         isCharging: batteryState === Battery.BatteryState.CHARGING,
       }));
@@ -164,7 +154,6 @@ export function useSensors() {
     };
   }, []);
 
-  // Contexte complet des capteurs
   const sensorContext = useMemo((): SensorContext => ({
     battery: batteryState,
     network: networkState,
@@ -172,7 +161,6 @@ export function useSensors() {
     lastUpdate: new Date(),
   }), [batteryState, networkState, timeContext]);
 
-  // Formatters
   const formattedBattery = useMemo(() => {
     return formatBattery(batteryState.level);
   }, [batteryState.level]);
@@ -185,7 +173,6 @@ export function useSensors() {
     return formatPartOfDay(timeContext.hour);
   }, [timeContext.hour]);
 
-  // Obtenir un message contextuel basé sur les capteurs
   const getContextualMessage = useCallback((): string | null => {
     if (batteryState.isCritical) {
       return "Ma batterie est presque vide... Je vais bientôt m'éteindre !";
@@ -206,26 +193,17 @@ export function useSensors() {
   }, [batteryState, timeContext, networkState]);
 
   return {
-    // États
     battery: batteryState,
     network: networkState,
     time: timeContext,
     context: sensorContext,
-
-    // Formatté
     formattedBattery,
     greeting,
     partOfDay: partOfDayFormatted,
-
-    // Actions
     refreshBattery: loadBatteryState,
     refreshNetwork: loadNetworkState,
     reactToBattery,
-
-    // Helpers
     getContextualMessage,
-
-    // Flags
     isLowBattery: batteryState.isLow,
     isCriticalBattery: batteryState.isCritical,
     isCharging: batteryState.isCharging,

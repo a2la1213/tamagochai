@@ -2,7 +2,7 @@
 // Composant barre d'hormone avec indicateur de niveau
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { HormoneType } from '../../types';
 import { HORMONE_CONFIGS } from '../../constants';
 import { formatHormoneName } from '../../utils';
@@ -17,12 +17,12 @@ interface HormoneBarProps {
 }
 
 const HORMONE_COLORS: Record<HormoneType, string> = {
-  dopamine: '#F59E0B',    // Ambre - motivation
-  serotonin: '#10B981',   // Vert - bien-être
-  oxytocin: '#EC4899',    // Rose - amour
-  cortisol: '#EF4444',    // Rouge - stress
-  adrenaline: '#F97316',  // Orange - excitation
-  endorphins: '#8B5CF6',  // Violet - euphorie
+  dopamine: '#F59E0B',
+  serotonin: '#10B981',
+  oxytocin: '#EC4899',
+  cortisol: '#EF4444',
+  adrenaline: '#F97316',
+  endorphins: '#8B5CF6',
 };
 
 const SIZES = {
@@ -31,9 +31,6 @@ const SIZES = {
   large: { height: 14, fontSize: 14 },
 };
 
-/**
- * Composant barre d'hormone
- */
 export function HormoneBar({
   hormone,
   level,
@@ -46,16 +43,10 @@ export function HormoneBar({
   const color = HORMONE_COLORS[hormone];
   const sizeConfig = SIZES[size];
 
-  // Niveau clamped entre 0 et 100
   const clampedLevel = Math.max(0, Math.min(100, level));
+  const fillWidthPercent = clampedLevel;
+  const baselinePercent = config.baseline;
 
-  // Pourcentage de remplissage
-  const fillWidth = `${clampedLevel}%`;
-
-  // Indicateur de baseline
-  const baselinePosition = `${config.baseline}%`;
-
-  // État du niveau
   const levelState = useMemo(() => {
     const diff = clampedLevel - config.baseline;
     if (Math.abs(diff) <= 10) return 'normal';
@@ -63,7 +54,6 @@ export function HormoneBar({
     return 'low';
   }, [clampedLevel, config.baseline]);
 
-  // Couleur de fond selon l'état
   const backgroundColor = useMemo(() => {
     switch (levelState) {
       case 'high':
@@ -77,7 +67,6 @@ export function HormoneBar({
 
   return (
     <View style={styles.container}>
-      {/* Label et valeur */}
       {(showLabel || showValue) && (
         <View style={styles.header}>
           {showLabel && (
@@ -93,7 +82,6 @@ export function HormoneBar({
         </View>
       )}
 
-      {/* Barre */}
       <View
         style={[
           styles.track,
@@ -103,30 +91,27 @@ export function HormoneBar({
           },
         ]}
       >
-        {/* Remplissage */}
-        <Animated.View
+        <View
           style={[
             styles.fill,
             {
-              width: fillWidth,
+              width: `${fillWidthPercent}%` as any,
               backgroundColor: color,
             },
           ]}
         />
 
-        {/* Indicateur de baseline */}
         <View
           style={[
             styles.baselineIndicator,
             {
-              left: baselinePosition,
+              left: `${baselinePercent}%` as any,
               height: sizeConfig.height + 4,
             },
           ]}
         />
       </View>
 
-      {/* Description (optionnel, seulement en large) */}
       {size === 'large' && (
         <Text style={styles.description}>
           {config.description}
@@ -136,9 +121,6 @@ export function HormoneBar({
   );
 }
 
-/**
- * Composant affichant toutes les hormones
- */
 export function HormonePanel({
   levels,
   size = 'medium',

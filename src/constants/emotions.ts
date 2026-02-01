@@ -1,10 +1,10 @@
 // src/constants/emotions.ts
 // Constantes du système émotionnel
 
-import { EmotionType, EmotionConfig, AvatarExpression } from '../types';
+import { EmotionType, EmotionConfig, EmotionIntensity } from '../types';
 
 /**
- * Configuration des émotions
+ * Configuration de chaque émotion
  */
 export const EMOTION_CONFIGS: Record<EmotionType, EmotionConfig> = {
   neutral: {
@@ -16,103 +16,139 @@ export const EMOTION_CONFIGS: Record<EmotionType, EmotionConfig> = {
     arousalRange: [0.3, 0.5],
     color: '#9CA3AF',
     emoji: '😐',
+    hormoneInfluence: {
+      primary: 'serotonin',
+    },
   },
   happy: {
     type: 'happy',
-    displayName: 'Heureux',
-    description: 'Joie et contentement',
+    displayName: 'Joyeux',
+    description: 'Sentiment de bonheur et satisfaction',
     expression: 'happy',
     valenceRange: [0.5, 1.0],
     arousalRange: [0.4, 0.7],
-    color: '#22C55E',
+    color: '#10B981',
     emoji: '😊',
+    hormoneInfluence: {
+      primary: 'dopamine',
+      secondary: 'serotonin',
+    },
   },
   sad: {
     type: 'sad',
     displayName: 'Triste',
-    description: 'Tristesse et mélancolie',
+    description: 'Sentiment de mélancolie',
     expression: 'sad',
     valenceRange: [-1.0, -0.4],
     arousalRange: [0.1, 0.4],
-    color: '#3B82F6',
+    color: '#6366F1',
     emoji: '😢',
+    hormoneInfluence: {
+      primary: 'serotonin',
+      secondary: 'cortisol',
+    },
   },
   angry: {
     type: 'angry',
     displayName: 'En colère',
-    description: 'Colère et frustration',
+    description: 'Sentiment de frustration',
     expression: 'angry',
     valenceRange: [-0.8, -0.3],
     arousalRange: [0.6, 1.0],
     color: '#EF4444',
     emoji: '😠',
+    hormoneInfluence: {
+      primary: 'cortisol',
+      secondary: 'adrenaline',
+    },
   },
   scared: {
     type: 'scared',
     displayName: 'Effrayé',
-    description: 'Peur et anxiété',
+    description: 'Sentiment de peur ou anxiété',
     expression: 'scared',
     valenceRange: [-0.9, -0.4],
     arousalRange: [0.7, 1.0],
     color: '#8B5CF6',
     emoji: '😨',
+    hormoneInfluence: {
+      primary: 'adrenaline',
+      secondary: 'cortisol',
+    },
   },
   loving: {
     type: 'loving',
     displayName: 'Aimant',
-    description: 'Amour et affection',
+    description: 'Sentiment d\'affection profonde',
     expression: 'loving',
     valenceRange: [0.6, 1.0],
     arousalRange: [0.3, 0.6],
     color: '#EC4899',
     emoji: '🥰',
+    hormoneInfluence: {
+      primary: 'oxytocin',
+      secondary: 'endorphins',
+    },
   },
   excited: {
     type: 'excited',
     displayName: 'Excité',
-    description: 'Excitation et enthousiasme',
+    description: 'État d\'excitation et enthousiasme',
     expression: 'happy',
     valenceRange: [0.4, 0.9],
     arousalRange: [0.8, 1.0],
-    color: '#F97316',
+    color: '#F59E0B',
     emoji: '🤩',
+    hormoneInfluence: {
+      primary: 'dopamine',
+      secondary: 'adrenaline',
+    },
   },
   tired: {
     type: 'tired',
     displayName: 'Fatigué',
-    description: 'Fatigue et épuisement',
+    description: 'État de fatigue et lassitude',
     expression: 'sad',
     valenceRange: [-0.3, 0.1],
     arousalRange: [0.0, 0.2],
     color: '#6B7280',
     emoji: '😴',
+    hormoneInfluence: {
+      primary: 'serotonin',
+    },
   },
   curious: {
     type: 'curious',
     displayName: 'Curieux',
-    description: 'Curiosité et intérêt',
+    description: 'Envie d\'apprendre et découvrir',
     expression: 'neutral',
     valenceRange: [0.2, 0.6],
     arousalRange: [0.5, 0.8],
     color: '#06B6D4',
     emoji: '🤔',
+    hormoneInfluence: {
+      primary: 'dopamine',
+    },
   },
   confused: {
     type: 'confused',
     displayName: 'Confus',
-    description: 'Confusion et perplexité',
+    description: 'État de confusion ou perplexité',
     expression: 'neutral',
     valenceRange: [-0.2, 0.2],
     arousalRange: [0.4, 0.7],
-    color: '#EAB308',
+    color: '#F97316',
     emoji: '😕',
+    hormoneInfluence: {
+      primary: 'cortisol',
+    },
   },
 };
 
 /**
- * Mapping émotion → expression avatar
+ * Mapping émotion -> expression avatar
  */
-export const EMOTION_TO_EXPRESSION: Record<EmotionType, AvatarExpression> = {
+export const EMOTION_TO_EXPRESSION: Record<EmotionType, string> = {
   neutral: 'neutral',
   happy: 'happy',
   sad: 'sad',
@@ -128,80 +164,15 @@ export const EMOTION_TO_EXPRESSION: Record<EmotionType, AvatarExpression> = {
 /**
  * Seuils d'intensité émotionnelle
  */
-export const EMOTION_INTENSITY_THRESHOLDS = {
+export const EMOTION_INTENSITY_THRESHOLDS: Record<EmotionIntensity, number> = {
   subtle: 0.25,
   moderate: 0.5,
   strong: 0.75,
   overwhelming: 0.9,
-} as const;
+};
 
 /**
- * Calcul de l'émotion basé sur les hormones
- * Formules simplifiées pour le MVP
- */
-export const EMOTION_FORMULAS = {
-  // Joie = (dopamine × 0.4 + sérotonine × 0.4 + endorphines × 0.2) × (1 - cortisol/200)
-  happy: {
-    weights: {
-      dopamine: 0.4,
-      serotonin: 0.4,
-      endorphins: 0.2,
-    },
-    cortisolPenalty: 200,
-  },
-  
-  // Tristesse = max(0, 60 - sérotonine) × 0.5 + max(0, 50 - dopamine) × 0.3 + cortisol × 0.2
-  sad: {
-    serotoninThreshold: 60,
-    serotoninWeight: 0.5,
-    dopamineThreshold: 50,
-    dopamineWeight: 0.3,
-    cortisolWeight: 0.2,
-  },
-  
-  // Peur = adrénaline × 0.5 + cortisol × 0.4 + max(0, 50 - ocytocine) × 0.1
-  scared: {
-    adrenalineWeight: 0.5,
-    cortisolWeight: 0.4,
-    oxytocinThreshold: 50,
-    oxytocinWeight: 0.1,
-  },
-  
-  // Amour = ocytocine × 0.7 + endorphines × 0.2 + sérotonine × 0.1
-  loving: {
-    oxytocinWeight: 0.7,
-    endorphinsWeight: 0.2,
-    serotoninWeight: 0.1,
-  },
-  
-  // Colère = cortisol × 0.4 + adrénaline × 0.3 + max(0, 40 - sérotonine) × 0.3
-  angry: {
-    cortisolWeight: 0.4,
-    adrenalineWeight: 0.3,
-    serotoninThreshold: 40,
-    serotoninWeight: 0.3,
-  },
-  
-  // Excitation = dopamine × 0.4 + adrénaline × 0.4 + endorphines × 0.2
-  excited: {
-    dopamineWeight: 0.4,
-    adrenalineWeight: 0.4,
-    endorphinsWeight: 0.2,
-  },
-} as const;
-
-/**
- * Durée minimale d'une émotion avant changement (ms)
- */
-export const EMOTION_MIN_DURATION = 5000;
-
-/**
- * Durée de transition entre émotions (ms)
- */
-export const EMOTION_TRANSITION_DURATION = 500;
-
-/**
- * Liste des émotions positives
+ * Émotions positives
  */
 export const POSITIVE_EMOTIONS: EmotionType[] = [
   'happy',
@@ -211,19 +182,19 @@ export const POSITIVE_EMOTIONS: EmotionType[] = [
 ];
 
 /**
- * Liste des émotions négatives
+ * Émotions négatives
  */
 export const NEGATIVE_EMOTIONS: EmotionType[] = [
   'sad',
   'angry',
   'scared',
-  'tired',
+  'confused',
 ];
 
 /**
- * Liste des émotions neutres
+ * Émotions neutres
  */
 export const NEUTRAL_EMOTIONS: EmotionType[] = [
   'neutral',
-  'confused',
+  'tired',
 ];

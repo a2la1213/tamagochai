@@ -35,7 +35,6 @@ export default function OnboardingScreen() {
   const createNew = useTamagochaiStore(state => state.createNew);
   const completeFirstLaunch = useTamagochaiStore(state => state.completeFirstLaunch);
 
-  // Valider et passer à l'étape suivante
   const handleNameSubmit = () => {
     const validation = validateName(name);
     if (!validation.isValid) {
@@ -46,7 +45,6 @@ export default function OnboardingScreen() {
     setStep('avatar');
   };
 
-  // Créer le TamagochAI
   const handleCreate = async () => {
     setIsCreating(true);
 
@@ -56,11 +54,6 @@ export default function OnboardingScreen() {
       await createNew({
         name: name.trim(),
         genome,
-        avatar: {
-          type: avatarType,
-          style: 'neutral',
-          color: avatarColor,
-        },
       });
 
       setStep('ready');
@@ -70,13 +63,11 @@ export default function OnboardingScreen() {
     }
   };
 
-  // Terminer l'onboarding
   const handleFinish = async () => {
     await completeFirstLaunch();
     router.replace('/(tabs)');
   };
 
-  // Écran de bienvenue
   if (step === 'welcome') {
     return (
       <View style={styles.container}>
@@ -98,7 +89,6 @@ export default function OnboardingScreen() {
     );
   }
 
-  // Écran de choix du nom
   if (step === 'name') {
     return (
       <KeyboardAvoidingView
@@ -143,7 +133,6 @@ export default function OnboardingScreen() {
     );
   }
 
-  // Écran de choix de l'avatar
   if (step === 'avatar') {
     return (
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
@@ -151,7 +140,6 @@ export default function OnboardingScreen() {
           <Text style={styles.title}>Choisis son apparence</Text>
           <Text style={styles.subtitle}>Tu pourras la modifier plus tard</Text>
 
-          {/* Preview */}
           <View style={styles.avatarPreview}>
             <Avatar
               config={{
@@ -166,7 +154,6 @@ export default function OnboardingScreen() {
             <Text style={styles.avatarName}>{name}</Text>
           </View>
 
-          {/* Type selection */}
           <Text style={styles.sectionTitle}>Type</Text>
           <View style={styles.optionsGrid}>
             {AVATAR_TYPES.map((type) => (
@@ -193,7 +180,6 @@ export default function OnboardingScreen() {
             ))}
           </View>
 
-          {/* Color selection */}
           <Text style={styles.sectionTitle}>Couleur</Text>
           <View style={styles.colorGrid}>
             {AVATAR_COLORS.map((color) => (
@@ -228,7 +214,6 @@ export default function OnboardingScreen() {
     );
   }
 
-  // Écran final
   if (step === 'ready') {
     return (
       <View style={styles.container}>

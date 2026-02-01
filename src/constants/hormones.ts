@@ -1,187 +1,183 @@
 // src/constants/hormones.ts
 // Constantes du système hormonal
 
-import { HormoneType, HormoneConfig, HormoneThresholds, HormoneModifier } from '../types';
+import { HormoneType, HormoneConfig, HormoneLevels, HormoneThresholds, HormoneModifier } from '../types';
 
 /**
- * Configuration des 6 hormones
+ * Configuration de chaque hormone
  */
 export const HORMONE_CONFIGS: Record<HormoneType, HormoneConfig> = {
   dopamine: {
     name: 'dopamine',
     displayName: 'Dopamine',
-    description: 'Plaisir, motivation, récompense',
+    description: 'Motivation, récompense et plaisir',
     baseline: 50,
     min: 0,
     max: 100,
-    halfLife: 30,        // 30 minutes
-    decayRate: 0.023,    // ~50% en 30 min
+    halfLife: 30,
+    decayRate: 0.02,
+    effects: {
+      low: 'Manque de motivation, apathie',
+      high: 'Enthousiasme, excitation',
+    },
   },
   serotonin: {
     name: 'serotonin',
     displayName: 'Sérotonine',
-    description: 'Bien-être, stabilité, humeur générale',
+    description: 'Bien-être, stabilité émotionnelle',
     baseline: 60,
     min: 0,
     max: 100,
-    halfLife: 240,       // 4 heures
-    decayRate: 0.003,    // Décroissance lente
+    halfLife: 45,
+    decayRate: 0.015,
+    effects: {
+      low: 'Tristesse, irritabilité',
+      high: 'Sérénité, optimisme',
+    },
   },
   oxytocin: {
     name: 'oxytocin',
     displayName: 'Ocytocine',
-    description: 'Attachement, confiance, lien social',
+    description: 'Attachement, lien social',
     baseline: 55,
     min: 0,
     max: 100,
-    halfLife: 60,        // 1 heure
-    decayRate: 0.012,
+    halfLife: 20,
+    decayRate: 0.03,
+    effects: {
+      low: 'Sentiment de solitude',
+      high: 'Affection, connexion',
+    },
   },
   cortisol: {
     name: 'cortisol',
     displayName: 'Cortisol',
-    description: 'Stress, alerte, anxiété',
+    description: 'Stress, vigilance',
     baseline: 25,
     min: 0,
     max: 100,
-    halfLife: 45,        // 45 minutes
-    decayRate: 0.015,
+    halfLife: 60,
+    decayRate: 0.01,
+    effects: {
+      low: 'Relaxation profonde',
+      high: 'Stress, anxiété',
+    },
   },
   adrenaline: {
     name: 'adrenaline',
     displayName: 'Adrénaline',
-    description: 'Excitation, peur, énergie immédiate',
+    description: 'Excitation, énergie immédiate',
     baseline: 20,
     min: 0,
     max: 100,
-    halfLife: 15,        // 15 minutes (très rapide)
-    decayRate: 0.046,
+    halfLife: 10,
+    decayRate: 0.05,
+    effects: {
+      low: 'Calme, léthargie',
+      high: 'Alerte, nervosité',
+    },
   },
   endorphins: {
     name: 'endorphins',
     displayName: 'Endorphines',
-    description: 'Bonheur, soulagement, euphorie',
+    description: 'Euphorie, bien-être physique',
     baseline: 40,
     min: 0,
     max: 100,
-    halfLife: 120,       // 2 heures
-    decayRate: 0.006,
+    halfLife: 25,
+    decayRate: 0.025,
+    effects: {
+      low: 'Inconfort, sensibilité',
+      high: 'Euphorie, analgésie',
+    },
   },
 };
 
 /**
- * Niveaux hormonaux par défaut (naissance)
- */
-export const DEFAULT_HORMONE_LEVELS: Record<HormoneType, number> = {
-  dopamine: 50,
-  serotonin: 60,
-  oxytocin: 55,
-  cortisol: 25,
-  adrenaline: 20,
-  endorphins: 40,
-};
-
-/**
- * Seuils pour interprétation des niveaux
+ * Seuils hormonaux
  */
 export const HORMONE_THRESHOLDS: HormoneThresholds = {
-  critical_low: 15,
-  low: 30,
+  critical_low: 10,
+  low: 25,
   normal_low: 45,
   normal_high: 65,
   high: 80,
-  critical_high: 80,
+  critical_high: 95,
 };
 
 /**
- * Modificateurs prédéfinis pour événements courants
+ * Niveaux par défaut
+ */
+export const DEFAULT_HORMONE_LEVELS: HormoneLevels = {
+  dopamine: HORMONE_CONFIGS.dopamine.baseline,
+  serotonin: HORMONE_CONFIGS.serotonin.baseline,
+  oxytocin: HORMONE_CONFIGS.oxytocin.baseline,
+  cortisol: HORMONE_CONFIGS.cortisol.baseline,
+  adrenaline: HORMONE_CONFIGS.adrenaline.baseline,
+  endorphins: HORMONE_CONFIGS.endorphins.baseline,
+};
+
+/**
+ * Modificateurs d'hormones prédéfinis
  */
 export const HORMONE_MODIFIERS = {
-  // Interactions positives
   userMessageReceived: [
     { hormone: 'dopamine' as HormoneType, delta: 8, source: 'user_message' },
     { hormone: 'oxytocin' as HormoneType, delta: 5, source: 'user_message' },
-    { hormone: 'cortisol' as HormoneType, delta: -3, source: 'user_message' },
+    { hormone: 'serotonin' as HormoneType, delta: 3, source: 'user_message' },
   ],
-  
-  complimentReceived: [
-    { hormone: 'dopamine' as HormoneType, delta: 15, source: 'compliment' },
-    { hormone: 'serotonin' as HormoneType, delta: 10, source: 'compliment' },
-    { hormone: 'oxytocin' as HormoneType, delta: 12, source: 'compliment' },
-    { hormone: 'endorphins' as HormoneType, delta: 8, source: 'compliment' },
+  positiveInteraction: [
+    { hormone: 'dopamine' as HormoneType, delta: 12, source: 'positive_interaction' },
+    { hormone: 'serotonin' as HormoneType, delta: 8, source: 'positive_interaction' },
+    { hormone: 'endorphins' as HormoneType, delta: 6, source: 'positive_interaction' },
   ],
-  
-  longConversation: [
-    { hormone: 'oxytocin' as HormoneType, delta: 15, source: 'long_conversation' },
-    { hormone: 'serotonin' as HormoneType, delta: 8, source: 'long_conversation' },
-    { hormone: 'endorphins' as HormoneType, delta: 10, source: 'long_conversation' },
+  negativeInteraction: [
+    { hormone: 'cortisol' as HormoneType, delta: 15, source: 'negative_interaction' },
+    { hormone: 'serotonin' as HormoneType, delta: -10, source: 'negative_interaction' },
+    { hormone: 'dopamine' as HormoneType, delta: -8, source: 'negative_interaction' },
   ],
-  
-  // Événements négatifs
   longAbsence: [
-    { hormone: 'cortisol' as HormoneType, delta: 20, source: 'absence' },
-    { hormone: 'oxytocin' as HormoneType, delta: -15, source: 'absence' },
-    { hormone: 'serotonin' as HormoneType, delta: -10, source: 'absence' },
+    { hormone: 'oxytocin' as HormoneType, delta: -20, source: 'long_absence' },
+    { hormone: 'serotonin' as HormoneType, delta: -10, source: 'long_absence' },
+    { hormone: 'cortisol' as HormoneType, delta: 10, source: 'long_absence' },
   ],
-  
-  harshMessage: [
-    { hormone: 'cortisol' as HormoneType, delta: 25, source: 'harsh_message' },
-    { hormone: 'adrenaline' as HormoneType, delta: 15, source: 'harsh_message' },
-    { hormone: 'oxytocin' as HormoneType, delta: -10, source: 'harsh_message' },
-    { hormone: 'serotonin' as HormoneType, delta: -8, source: 'harsh_message' },
-  ],
-  
-  // Capteurs
   batteryLow: [
-    { hormone: 'cortisol' as HormoneType, delta: 15, source: 'battery_low' },
-    { hormone: 'adrenaline' as HormoneType, delta: 10, source: 'battery_low' },
+    { hormone: 'cortisol' as HormoneType, delta: 10, source: 'battery_low' },
+    { hormone: 'adrenaline' as HormoneType, delta: 5, source: 'battery_low' },
   ],
-  
   batteryCritical: [
-    { hormone: 'cortisol' as HormoneType, delta: 30, source: 'battery_critical' },
-    { hormone: 'adrenaline' as HormoneType, delta: 25, source: 'battery_critical' },
-    { hormone: 'serotonin' as HormoneType, delta: -15, source: 'battery_critical' },
+    { hormone: 'cortisol' as HormoneType, delta: 20, source: 'battery_critical' },
+    { hormone: 'adrenaline' as HormoneType, delta: 15, source: 'battery_critical' },
+    { hormone: 'serotonin' as HormoneType, delta: -10, source: 'battery_critical' },
   ],
-  
   batteryCharging: [
     { hormone: 'cortisol' as HormoneType, delta: -10, source: 'battery_charging' },
     { hormone: 'serotonin' as HormoneType, delta: 5, source: 'battery_charging' },
   ],
-  
   nightTime: [
-    { hormone: 'serotonin' as HormoneType, delta: -5, source: 'night_time' },
     { hormone: 'adrenaline' as HormoneType, delta: -10, source: 'night_time' },
+    { hormone: 'serotonin' as HormoneType, delta: -5, source: 'night_time' },
   ],
-  
   morningGreeting: [
-    { hormone: 'dopamine' as HormoneType, delta: 10, source: 'morning' },
-    { hormone: 'serotonin' as HormoneType, delta: 8, source: 'morning' },
-    { hormone: 'cortisol' as HormoneType, delta: -5, source: 'morning' },
+    { hormone: 'dopamine' as HormoneType, delta: 10, source: 'morning_greeting' },
+    { hormone: 'serotonin' as HormoneType, delta: 8, source: 'morning_greeting' },
+    { hormone: 'cortisol' as HormoneType, delta: 5, source: 'morning_greeting' },
   ],
-  
-  // Évolution
-  stageUp: [
-    { hormone: 'dopamine' as HormoneType, delta: 30, source: 'evolution' },
-    { hormone: 'endorphins' as HormoneType, delta: 25, source: 'evolution' },
-    { hormone: 'serotonin' as HormoneType, delta: 15, source: 'evolution' },
-    { hormone: 'oxytocin' as HormoneType, delta: 10, source: 'evolution' },
+  memoryCreated: [
+    { hormone: 'dopamine' as HormoneType, delta: 10, source: 'memory_created' },
+    { hormone: 'oxytocin' as HormoneType, delta: 8, source: 'memory_created' },
   ],
-  
-  // Mémoire
-  flashMemoryCreated: [
+  flashMemory: [
     { hormone: 'dopamine' as HormoneType, delta: 20, source: 'flash_memory' },
-    { hormone: 'oxytocin' as HormoneType, delta: 15, source: 'flash_memory' },
-    { hormone: 'endorphins' as HormoneType, delta: 12, source: 'flash_memory' },
+    { hormone: 'endorphins' as HormoneType, delta: 15, source: 'flash_memory' },
+    { hormone: 'oxytocin' as HormoneType, delta: 10, source: 'flash_memory' },
   ],
 } as const;
 
 /**
- * Calcule le facteur de décroissance pour un temps donné
+ * Calcule le facteur de décroissance
  */
-export function calculateDecayFactor(
-  hormone: HormoneType,
-  elapsedMinutes: number
-): number {
+export function calculateDecayFactor(hormone: HormoneType, elapsedMinutes: number): number {
   const config = HORMONE_CONFIGS[hormone];
   return Math.pow(0.5, elapsedMinutes / config.halfLife);
 }
@@ -196,7 +192,7 @@ export function applyDecayToBaseline(
 ): number {
   const config = HORMONE_CONFIGS[hormone];
   const baseline = config.baseline;
-  const difference = currentLevel - baseline;
+  const diff = currentLevel - baseline;
   const decayFactor = calculateDecayFactor(hormone, elapsedMinutes);
-  return baseline + (difference * decayFactor);
+  return baseline + diff * decayFactor;
 }

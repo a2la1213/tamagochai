@@ -1,14 +1,17 @@
 // src/constants/avatar.ts
-// Constantes pour l'avatar et la personnalisation
+// Constantes pour l'avatar
 
-import { 
-  AvatarType, 
-  AvatarStyle, 
-  AvatarColor, 
+import {
+  AvatarType,
+  AvatarStyle,
+  AvatarColor,
   AvatarExpression,
+  AvatarItemSlot,
   ItemCategory,
   ItemRarity,
   AvatarItem,
+  AvatarConfig,
+  EquippedItems,
 } from '../types';
 
 /**
@@ -21,59 +24,75 @@ export const AVATAR_TYPE_CONFIG: Record<AvatarType, {
 }> = {
   robot: {
     name: 'Robot',
-    description: 'IA assumée, mécanique, technologique',
+    description: 'Un compagnon mécanique et logique',
     emoji: '🤖',
   },
   humanoid: {
     name: 'Humanoïde',
-    description: 'Proche de l\'humain, expressif, familier',
-    emoji: '👤',
+    description: 'Un ami à forme humaine',
+    emoji: '🧑',
   },
   creature: {
     name: 'Créature',
-    description: 'Fantaisie, magique, mythologique',
-    emoji: '🧝',
+    description: 'Un être fantastique et mystérieux',
+    emoji: '🐲',
   },
   spirit: {
     name: 'Esprit',
-    description: 'Éthéré, immatériel, mystérieux',
+    description: 'Une entité éthérée et spirituelle',
     emoji: '👻',
   },
   animal: {
     name: 'Animal',
-    description: 'Mignon, familier, attachant',
+    description: 'Un compagnon animal adorable',
     emoji: '🐱',
   },
   abstract: {
     name: 'Abstrait',
-    description: 'Formes géométriques, non-figuratif',
+    description: 'Une forme géométrique vivante',
     emoji: '◆',
   },
 };
 
 /**
- * Configuration des styles
+ * Configuration des styles d'avatar
  */
 export const AVATAR_STYLE_CONFIG: Record<AvatarStyle, {
   name: string;
   description: string;
 }> = {
-  feminine: {
-    name: 'Féminin',
-    description: 'Traits doux, courbes élégantes',
+  cute: {
+    name: 'Mignon',
+    description: 'Style adorable et kawaii',
   },
-  masculine: {
-    name: 'Masculin',
-    description: 'Traits marqués, angles définis',
+  cool: {
+    name: 'Cool',
+    description: 'Style décontracté et branché',
+  },
+  elegant: {
+    name: 'Élégant',
+    description: 'Style raffiné et sophistiqué',
+  },
+  funny: {
+    name: 'Drôle',
+    description: 'Style amusant et comique',
   },
   neutral: {
     name: 'Neutre',
-    description: 'Équilibré, androgyne',
+    description: 'Style simple et équilibré',
+  },
+  feminine: {
+    name: 'Féminin',
+    description: 'Style doux et gracieux',
+  },
+  masculine: {
+    name: 'Masculin',
+    description: 'Style fort et affirmé',
   },
 };
 
 /**
- * Configuration des couleurs
+ * Configuration des couleurs d'avatar
  */
 export const AVATAR_COLOR_CONFIG: Record<AvatarColor, {
   name: string;
@@ -81,68 +100,61 @@ export const AVATAR_COLOR_CONFIG: Record<AvatarColor, {
   emoji: string;
 }> = {
   blue: {
-    name: 'Bleu Océan',
+    name: 'Bleu',
     hex: '#3B82F6',
     emoji: '🔵',
   },
   purple: {
-    name: 'Violet Cosmos',
+    name: 'Violet',
     hex: '#8B5CF6',
     emoji: '🟣',
   },
   green: {
-    name: 'Vert Nature',
-    hex: '#22C55E',
+    name: 'Vert',
+    hex: '#10B981',
     emoji: '🟢',
   },
   yellow: {
-    name: 'Or Soleil',
-    hex: '#EAB308',
+    name: 'Jaune',
+    hex: '#F59E0B',
     emoji: '🟡',
   },
   red: {
-    name: 'Rouge Passion',
+    name: 'Rouge',
     hex: '#EF4444',
     emoji: '🔴',
   },
   orange: {
-    name: 'Orange Énergie',
+    name: 'Orange',
     hex: '#F97316',
     emoji: '🟠',
   },
+  pink: {
+    name: 'Rose',
+    hex: '#EC4899',
+    emoji: '💗',
+  },
+  cyan: {
+    name: 'Cyan',
+    hex: '#06B6D4',
+    emoji: '🩵',
+  },
   black: {
-    name: 'Noir Mystère',
+    name: 'Noir',
     hex: '#1F2937',
     emoji: '⚫',
   },
   white: {
-    name: 'Blanc Pur',
+    name: 'Blanc',
     hex: '#F9FAFB',
     emoji: '⚪',
   },
-  pink: {
-    name: 'Rose Doux',
-    hex: '#EC4899',
-    emoji: '🩷',
-  },
-  cyan: {
-    name: 'Cyan Tech',
-    hex: '#06B6D4',
-    emoji: '🩵',
+  gold: {
+    name: 'Or',
+    hex: '#D4AF37',
+    emoji: '🌟',
   },
 };
-
-/**
- * Liste ordonnée des expressions
- */
-export const AVATAR_EXPRESSIONS: AvatarExpression[] = [
-  'neutral',
-  'happy',
-  'sad',
-  'angry',
-  'scared',
-  'loving',
-];
 
 /**
  * Configuration des catégories d'items
@@ -164,22 +176,22 @@ export const ITEM_CATEGORY_CONFIG: Record<ItemCategory, {
   },
   body: {
     name: 'Corps',
-    description: 'Vêtements, tenues, accessoires corporels',
+    description: 'Vêtements, costumes, tenues',
     maxEquipped: 1,
   },
   accessory: {
     name: 'Accessoire',
-    description: 'Objets tenus, bijoux, décorations',
-    maxEquipped: 1,
+    description: 'Objets tenus, compagnons, extras',
+    maxEquipped: 2,
   },
   background: {
     name: 'Fond',
-    description: 'Arrière-plans personnalisés',
+    description: 'Arrière-plans et décors',
     maxEquipped: 1,
   },
   effect: {
     name: 'Effet',
-    description: 'Effets visuels, particules, auras',
+    description: 'Particules, auras, effets visuels',
     maxEquipped: 1,
   },
 };
@@ -190,160 +202,139 @@ export const ITEM_CATEGORY_CONFIG: Record<ItemCategory, {
 export const ITEM_RARITY_CONFIG: Record<ItemRarity, {
   name: string;
   color: string;
-  starMultiplier: number;
+  dropRate: number;
 }> = {
   common: {
     name: 'Commun',
     color: '#9CA3AF',
-    starMultiplier: 1,
+    dropRate: 0.5,
   },
   uncommon: {
     name: 'Peu commun',
-    color: '#22C55E',
-    starMultiplier: 2,
+    color: '#10B981',
+    dropRate: 0.3,
   },
   rare: {
     name: 'Rare',
     color: '#3B82F6',
-    starMultiplier: 4,
+    dropRate: 0.15,
   },
   epic: {
     name: 'Épique',
     color: '#8B5CF6',
-    starMultiplier: 8,
+    dropRate: 0.04,
   },
   legendary: {
     name: 'Légendaire',
-    color: '#EAB308',
-    starMultiplier: 16,
+    color: '#F59E0B',
+    dropRate: 0.01,
   },
 };
 
 /**
- * Items gratuits de base (MVP)
+ * Items par défaut disponibles
  */
 export const DEFAULT_ITEMS: Partial<AvatarItem>[] = [
-  // Têtes
   {
-    id: 'head_none',
-    name: 'Aucun',
-    description: 'Pas d\'accessoire de tête',
+    id: 'hat_basic',
+    name: 'Chapeau basique',
+    description: 'Un chapeau simple',
+    slot: 'head',
     category: 'head',
     rarity: 'common',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
   {
-    id: 'head_cap_basic',
-    name: 'Casquette simple',
-    description: 'Une casquette décontractée',
+    id: 'hat_crown',
+    name: 'Couronne',
+    description: 'Une couronne royale',
+    slot: 'head',
     category: 'head',
-    rarity: 'common',
+    rarity: 'rare',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'animal'],
   },
-  
-  // Visage
   {
-    id: 'face_none',
-    name: 'Aucun',
-    description: 'Pas d\'accessoire facial',
+    id: 'glasses_cool',
+    name: 'Lunettes de soleil',
+    description: 'Des lunettes stylées',
+    slot: 'face',
+    category: 'face',
+    rarity: 'uncommon',
+    isPremium: false,
+  },
+  {
+    id: 'glasses_nerd',
+    name: 'Lunettes geek',
+    description: 'Des lunettes de geek',
+    slot: 'face',
     category: 'face',
     rarity: 'common',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
   {
-    id: 'face_glasses_round',
-    name: 'Lunettes rondes',
-    description: 'Des lunettes rondes classiques',
-    category: 'face',
-    rarity: 'common',
-    isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'animal'],
-  },
-  
-  // Corps
-  {
-    id: 'body_none',
-    name: 'Aucun',
-    description: 'Pas de vêtement',
+    id: 'costume_suit',
+    name: 'Costume',
+    description: 'Un costume élégant',
+    slot: 'body',
     category: 'body',
-    rarity: 'common',
+    rarity: 'uncommon',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
-  },
-  
-  // Accessoires
-  {
-    id: 'accessory_none',
-    name: 'Aucun',
-    description: 'Pas d\'accessoire',
-    category: 'accessory',
-    rarity: 'common',
-    isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
   {
-    id: 'accessory_star_badge',
-    name: 'Badge étoile',
-    description: 'Un joli badge en forme d\'étoile',
+    id: 'pet_cat',
+    name: 'Chat',
+    description: 'Un petit chat mignon',
+    slot: 'accessory',
     category: 'accessory',
-    rarity: 'common',
+    rarity: 'rare',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
-  
-  // Fonds
+  {
+    id: 'pet_bird',
+    name: 'Oiseau',
+    description: 'Un petit oiseau coloré',
+    slot: 'accessory',
+    category: 'accessory',
+    rarity: 'uncommon',
+    isPremium: false,
+  },
   {
     id: 'bg_gradient_blue',
     name: 'Dégradé bleu',
     description: 'Un fond dégradé bleu apaisant',
+    slot: 'background',
     category: 'background',
     rarity: 'common',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
   {
     id: 'bg_gradient_purple',
     name: 'Dégradé violet',
     description: 'Un fond dégradé violet mystique',
+    slot: 'background',
     category: 'background',
-    rarity: 'common',
+    rarity: 'uncommon',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
-  
-  // Effets
   {
-    id: 'effect_none',
-    name: 'Aucun',
-    description: 'Pas d\'effet',
+    id: 'effect_sparkles',
+    name: 'Étincelles',
+    description: 'Des étincelles magiques',
+    slot: 'effect',
     category: 'effect',
-    rarity: 'common',
+    rarity: 'rare',
     isPremium: false,
-    priceStars: 0,
-    compatibleTypes: ['robot', 'humanoid', 'creature', 'spirit', 'animal', 'abstract'],
   },
 ];
 
 /**
- * Configuration par défaut de l'avatar
+ * Configuration d'avatar par défaut
  */
-export const DEFAULT_AVATAR_CONFIG = {
-  type: 'robot' as AvatarType,
-  style: 'neutral' as AvatarStyle,
-  color: 'blue' as AvatarColor,
-  currentExpression: 'neutral' as AvatarExpression,
+export const DEFAULT_AVATAR_CONFIG: AvatarConfig = {
+  type: 'robot',
+  style: 'neutral',
+  color: 'blue',
+  currentExpression: 'neutral',
   equippedItems: {
     head: null,
     face: null,

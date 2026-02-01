@@ -8,9 +8,6 @@ import { EvolutionStage, XPSource, EvolutionProgress, XPEvent } from '../types';
 import { EVOLUTION_STAGES, XP_SOURCES, STAGE_ORDER } from '../constants';
 import { formatXP, formatStageName } from '../utils';
 
-/**
- * Hook pour accéder à l'évolution du TamagochAI
- */
 export function useEvolution() {
   const tamagochai = useTamagochaiStore(state => state.tamagochai);
   const refreshEvolution = useTamagochaiStore(state => state.refreshEvolution);
@@ -20,7 +17,6 @@ export function useEvolution() {
     { stage: EvolutionStage; unlocked: boolean; current: boolean }[]
   >([]);
 
-  // Charger la progression
   const loadProgress = useCallback(async () => {
     if (!tamagochai) return;
 
@@ -35,46 +31,33 @@ export function useEvolution() {
     }
   }, [tamagochai?.id]);
 
-  // Charger au montage
   useEffect(() => {
     loadProgress();
   }, [loadProgress]);
 
-  // Stade actuel
   const currentStage = tamagochai?.stage ?? 'emergence';
-
-  // XP total
   const totalXP = tamagochai?.xp ?? 0;
 
-  // Config du stade actuel
   const stageConfig = useMemo(() => {
     return EVOLUTION_STAGES[currentStage];
   }, [currentStage]);
 
-  // Prochain stade
   const nextStage = progress?.nextStage ?? null;
 
-  // Config du prochain stade
   const nextStageConfig = useMemo(() => {
     return nextStage ? EVOLUTION_STAGES[nextStage] : null;
   }, [nextStage]);
 
-  // Pourcentage de progression
   const percentage = progress?.percentage ?? 0;
 
-  // XP restant pour évoluer
   const xpRemaining = useMemo(() => {
     if (!progress?.xpForNextStage) return 0;
     return Math.max(0, progress.xpForNextStage - progress.xpInCurrentStage);
   }, [progress]);
 
-  // Est au stade final ?
   const isFinalStage = currentStage === 'transcendence';
-
-  // Multiplicateur actuel
   const multiplier = evolutionService.getMultiplier();
 
-  // Accorder de l'XP
   const grantXP = useCallback(
     async (source: XPSource, metadata?: Record<string, any>): Promise<XPEvent | null> => {
       if (!tamagochai) return null;
@@ -96,7 +79,6 @@ export function useEvolution() {
     [tamagochai?.id, refreshEvolution, loadProgress]
   );
 
-  // Obtenir les infos d'un stade
   const getStageInfo = useCallback((stage: EvolutionStage) => {
     const config = EVOLUTION_STAGES[stage];
     const index = STAGE_ORDER.indexOf(stage);
@@ -120,7 +102,6 @@ export function useEvolution() {
     };
   }, [currentStage]);
 
-  // Obtenir les infos d'une source d'XP
   const getSourceInfo = useCallback((source: XPSource) => {
     const config = XP_SOURCES[source];
     return {
@@ -133,55 +114,40 @@ export function useEvolution() {
     };
   }, [multiplier]);
 
-  // Formater l'XP actuel
   const formattedXP = useMemo(() => {
     return formatXP(totalXP);
   }, [totalXP]);
 
-  // Formater l'XP restant
   const formattedXPRemaining = useMemo(() => {
     return formatXP(xpRemaining);
   }, [xpRemaining]);
 
-  // Liste de toutes les sources d'XP
   const allSources = useMemo(() => {
     return Object.keys(XP_SOURCES) as XPSource[];
   }, []);
 
-  // Jours estimés restants
   const estimatedDaysRemaining = progress?.estimatedDaysRemaining;
 
   return {
-    // État
     currentStage,
     totalXP,
     progress,
     percentage,
     xpRemaining,
     multiplier,
-
-    // Stades
     stageConfig,
     nextStage,
     nextStageConfig,
     stagesStatus,
     isFinalStage,
-
-    // Formaté
     formattedXP,
     formattedXPRemaining,
     estimatedDaysRemaining,
-
-    // Actions
     grantXP,
     refresh: refreshEvolution,
     reload: loadProgress,
-
-    // Helpers
     getStageInfo,
     getSourceInfo,
-
-    // Données
     allStages: STAGE_ORDER,
     allSources,
   };
